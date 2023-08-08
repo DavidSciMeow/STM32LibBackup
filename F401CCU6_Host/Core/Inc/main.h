@@ -46,7 +46,8 @@ extern "C" {
 
 /* Exported macro ------------------------------------------------------------*/
 /* USER CODE BEGIN EM */
-
+extern UART_HandleTypeDef huart2;
+extern uint8_t rData[];
 /* USER CODE END EM */
 
 /* Exported functions prototypes ---------------------------------------------*/
@@ -57,6 +58,10 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define ILED_Pin GPIO_PIN_13
+#define ILED_GPIO_Port GPIOC
+#define USB_OTG_FS_ID_Pin GPIO_PIN_15
+#define USB_OTG_FS_ID_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 

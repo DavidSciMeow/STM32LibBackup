@@ -2,3 +2,5 @@
 /**/Debug/*
 /**/.settings/*
 .metadata/*
+*.log
+.metadata/.plugins/org.eclipse.cdt.core/.log
