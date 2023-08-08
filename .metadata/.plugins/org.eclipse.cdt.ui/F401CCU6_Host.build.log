@@ -1,10 +1,10 @@
-15:28:36 **** Incremental Build of configuration Debug for project F401CCU6_Host ****
+16:02:58 **** Incremental Build of configuration Debug for project F401CCU6_Host ****
 make -j16 all 
 arm-none-eabi-size   F401CCU6_Host.elf 
    text	   data	    bss	    dec	    hex	filename
-   8400	     20	   1580	  10000	   2710	F401CCU6_Host.elf
+   8548	     20	   1580	  10148	   27a4	F401CCU6_Host.elf
 Finished building: default.size.stdout
  
 
-15:28:37 Build Finished. 0 errors, 0 warnings. (took 264ms)
+16:02:58 Build Finished. 0 errors, 0 warnings. (took 271ms)
 

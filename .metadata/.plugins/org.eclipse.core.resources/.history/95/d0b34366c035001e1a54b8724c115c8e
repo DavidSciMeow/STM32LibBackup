@@ -99,11 +99,7 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-    HAL_GPIO_WritePin(ILED_GPIO_Port,ILED_Pin,GPIO_PIN_SET);
-    OLED_ShowString(2,1,"SET");
-    HAL_Delay(1000);
-    HAL_GPIO_WritePin(ILED_GPIO_Port,ILED_Pin,GPIO_PIN_RESET);
-    OLED_ShowString(2,1,"RESET");
+    HAL_GPIO_WritePin(GPIO)
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
