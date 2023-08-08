@@ -1,0 +1,2 @@
+C:/Users/David/STM32Cube/Repository/STM32Cube_FW_F4_V1.27.1/Middlewares/ST/STM32_USB_Host_Library/Class/HID/Src/usbh_hid_parser.c:100:10:HID_ReadItem	40	static
+C:/Users/David/STM32Cube/Repository/STM32Cube_FW_F4_V1.27.1/Middlewares/ST/STM32_USB_Host_Library/Class/HID/Src/usbh_hid_parser.c:168:10:HID_WriteItem	48	static
