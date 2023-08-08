@@ -1,2 +1,4 @@
-Core/
-*.log
+/**/Driver/*
+/**/Debug/*
+/**/.settings/*
+.metadata/*
