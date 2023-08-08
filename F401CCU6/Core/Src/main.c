@@ -20,7 +20,6 @@
 #include "main.h"
 #include "usb_host.h"
 
-
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "OLED.h"
@@ -33,6 +32,8 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+#define LED_On()		HAL_GPIO_WritePin(ILED_GPIO_Port, ILED_Pin, GPIO_PIN_SET);
+#define LED_Off()		HAL_GPIO_WritePin(ILED_GPIO_Port, ILED_Pin, GPIO_PIN_RESET);
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -98,13 +99,15 @@ int main(void)
   MX_USB_HOST_Init();
   /* USER CODE BEGIN 2 */
   OLED_Init();
+  LED_Off();
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	OLED_ShowString(1,1,"InitComp");
+	  LED_On();
+	  OLED_ShowString(1,1,"InitComp");
     /* USER CODE END WHILE */
     MX_USB_HOST_Process();
 
@@ -236,7 +239,7 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOA, LED_CS_Pin|LED_DC_Pin|LED_RES_Pin|LED_SDA_Pin
-                          |LED_SCL_Pin, GPIO_PIN_RESET);
+                          |LED_SCL_Pin|ILED_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pins : LED_CS_Pin LED_DC_Pin LED_RES_Pin LED_SDA_Pin
                            LED_SCL_Pin */
@@ -246,6 +249,13 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : ILED_Pin */
+  GPIO_InitStruct.Pin = ILED_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(ILED_GPIO_Port, &GPIO_InitStruct);
 
 }
 

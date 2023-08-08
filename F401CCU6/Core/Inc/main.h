@@ -67,6 +67,8 @@ void Error_Handler(void);
 #define LED_SDA_GPIO_Port GPIOA
 #define LED_SCL_Pin GPIO_PIN_7
 #define LED_SCL_GPIO_Port GPIOA
+#define ILED_Pin GPIO_PIN_13
+#define ILED_GPIO_Port GPIOA
 
 /* USER CODE BEGIN Private defines */
 
