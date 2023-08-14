@@ -60,6 +60,8 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define ILED_Pin GPIO_PIN_13
 #define ILED_GPIO_Port GPIOC
+#define ISW_0_Pin GPIO_PIN_0
+#define ISW_0_GPIO_Port GPIOA
 #define USB_OTG_FS_ID_Pin GPIO_PIN_15
 #define USB_OTG_FS_ID_GPIO_Port GPIOB
 

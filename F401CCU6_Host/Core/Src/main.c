@@ -46,9 +46,8 @@ CRC_HandleTypeDef hcrc;
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
-uint8_t rData[1];
-uint8_t tData[] = "Hello";
-uint8_t _isTX = 0;
+uint8_t rData[16];
+uint8_t tData[16] = "Hello";
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -105,12 +104,12 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    if(_isTX == 0){
-      LED_ON();
-      HAL_UART_Transmit(&huart2, tData, sizeof(tData) / sizeof(uint8_t), 1000);
-      LED_OFF();
-    }
-    HAL_Delay(500);
+	if(HAL_GPIO_ReadPin(ISW_0_GPIO_Port, ISW_0_Pin) == GPIO_PIN_RESET){ //on
+		LED_ON();
+	    HAL_UART_Transmit(&huart2, tData, sizeof(tData) / sizeof(uint8_t), 1000);
+	    LED_OFF();
+	}
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -273,17 +272,17 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(ILED_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : PA0 */
-  GPIO_InitStruct.Pin = GPIO_PIN_0;
+  /*Configure GPIO pin : ISW_0_Pin */
+  GPIO_InitStruct.Pin = ISW_0_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+  HAL_GPIO_Init(ISW_0_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pin : USB_OTG_FS_ID_Pin */
   GPIO_InitStruct.Pin = USB_OTG_FS_ID_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
   HAL_GPIO_Init(USB_OTG_FS_ID_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : PA10 PA11 PA12 */
@@ -301,10 +300,7 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN 4 */
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-  _isTX = 1;
-  HAL_UART_Receive_IT(&huart2, rData, 1);
-  //...read
-  _isTX = 0;
+  //HAL_UART_Receive_IT(&huart2, rData, 1);
 }
 /* USER CODE END 4 */
 
