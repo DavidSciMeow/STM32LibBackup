@@ -18,21 +18,21 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "OLED.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "OLED.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-
+uint8_t* my_uart_redata={0,0,0,0,0,0,0,0};
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+#define LED_OFF() HAL_GPIO_WritePin(ILED_GPIO_Port, ILED_Pin,GPIO_PIN_SET);
+#define LED_ON() HAL_GPIO_WritePin(ILED_GPIO_Port, ILED_Pin,GPIO_PIN_RESET);
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -44,6 +44,8 @@
 CRC_HandleTypeDef hcrc;
 
 UART_HandleTypeDef huart2;
+DMA_HandleTypeDef hdma_usart2_tx;
+DMA_HandleTypeDef hdma_usart2_rx;
 
 /* USER CODE BEGIN PV */
 
@@ -52,9 +54,10 @@ UART_HandleTypeDef huart2;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
+static void MX_DMA_Init(void);
 static void MX_CRC_Init(void);
-static void MX_USART2_UART_Init(void);
 static void MX_USB_OTG_FS_USB_Init(void);
+static void MX_USART2_UART_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -92,22 +95,21 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_CRC_Init();
-  MX_USART2_UART_Init();
   MX_USB_OTG_FS_USB_Init();
+  MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
   OLED_Init();
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  HAL_UART_Receive_DMA(&huart2,&my_uart_redata,1);
   OLED_ShowString(1, 1, "Init Complete");
+  LED_ON();
   while (1)
   {
-	  HAL_Delay(1000);
-	  OLED_ShowString(2, 1, "--");
-	  HAL_Delay(1000);
-	  OLED_ShowString(2, 1, "++");
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -241,6 +243,25 @@ static void MX_USB_OTG_FS_USB_Init(void)
 }
 
 /**
+  * Enable DMA controller clock
+  */
+static void MX_DMA_Init(void)
+{
+
+  /* DMA controller clock enable */
+  __HAL_RCC_DMA1_CLK_ENABLE();
+
+  /* DMA interrupt init */
+  /* DMA1_Stream5_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Stream5_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Stream5_IRQn);
+  /* DMA1_Stream6_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Stream6_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Stream6_IRQn);
+
+}
+
+/**
   * @brief GPIO Initialization Function
   * @param None
   * @retval None
@@ -258,18 +279,24 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(ILEDS_GPIO_Port, ILEDS_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(ILED_GPIO_Port, ILED_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, LED_SCL_Pin|LED_SDA_Pin|LED_RES_Pin|LED_DC_Pin
                           |LED_CS_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pin : ILEDS_Pin */
-  GPIO_InitStruct.Pin = ILEDS_Pin;
+  /*Configure GPIO pin : ILED_Pin */
+  GPIO_InitStruct.Pin = ILED_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(ILEDS_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(ILED_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : BUTTON_Pin */
+  GPIO_InitStruct.Pin = BUTTON_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(BUTTON_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : PA10 PA11 PA12 */
   GPIO_InitStruct.Pin = GPIO_PIN_10|GPIO_PIN_11|GPIO_PIN_12;
@@ -293,7 +320,22 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
+    //if(huart->Instance == USART2)
+    //{
+    	LED_ON();
+    	OLED_ShowString(2, 1, "RECV:");
+    	OLED_ShowString(3, 1, (uint8_t*)&my_uart_redata);
+    	u_send("OK\r\n");
+    	OLED_ShowString(2, 1, "SEND->");
+    	LED_OFF();
+    //}
+}
 
+void u_send(uint8_t *tdata){
+	while(HAL_DMA_GetState(&hdma_usart2_tx) == HAL_DMA_STATE_BUSY) HAL_Delay(1);
+	HAL_UART_Transmit_DMA(&huart2, tdata, sizeof(tdata)/sizeof(tdata[0]));
+}
 /* USER CODE END 4 */
 
 /**
